@@ -33,8 +33,11 @@ class almadina(scrapy.Spider):
         item['date'] = date
 
         # Extract the content
-        paragraphs = ' '.join(response.xpath('/html/body/main/div[5]/div/div[1]/div[1]/div[5]/div[2]//text()').getall()).strip()
-        item['content'] = paragraphs
+        paragraphs = ' '.join(response.xpath('/html/body/main/div[5]/div/div[1]/div[1]/div[5]/div[2]/text()').getall()).strip()
+        if paragraphs is not paragraphs or not ''.join(paragraphs).strip():
+             item['content'] = ' '.join(response.xpath('/html/body/main/div[5]/div/div[1]/div/div[5]/div[2]/text()').getall()).strip()
+        else:
+            item['content'] = paragraphs
 
         item['url'] = response.xpath('/html/head/link[3]/@href').get()
 
