@@ -6,8 +6,12 @@ class okaz(scrapy.Spider):
     name = "okaz"
 
     custom_settings = {
-    'DOWNLOAD_DELAY': 1,
-    'CONCURRENT_REQUESTS_PER_DOMAIN': 8,
+        'DOWNLOAD_DELAY': 2,
+        'CONCURRENT_REQUESTS_PER_DOMAIN': 200,  # Increased concurrent requests
+        'AUTOTHROTTLE_ENABLED': True,  # Enabled AutoThrottle extension
+        'AUTOTHROTTLE_START_DELAY': .1,  # Initial delay for AutoThrottle
+        'AUTOTHROTTLE_MAX_DELAY': .3,  # Maximum delay for AutoThrottle
+        'AUTOTHROTTLE_TARGET_CONCURRENCY': 200,  # Target concurrency for AutoThrottle
     }
 
     def __init__(self, *args, **kwargs):
