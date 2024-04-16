@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 import scrapy
 import json
 
@@ -18,7 +19,7 @@ class almadina(scrapy.Spider):
         super().__init__(*args, **kwargs)
         self.items = []
         self.first_page = 1
-        self.latest_page = 883403
+        self.latest_page = 884393
     def start_requests(self):
         for i in range(self.first_page,self.latest_page+1):
             url = f'https://www.al-madina.com/article/{i}'
@@ -29,17 +30,13 @@ class almadina(scrapy.Spider):
        
         item['title'] = response.xpath('/html/body/main/div[5]/div/div[1]/div[1]/h1//text()').get()
 
-        date = response.xpath('/html/head/meta[13]/@content').get()
-        item['date'] = date
+        item['date'] = response.xpath('/html/head/meta[13]/@content').get()
 
-        # Extract the content
-        paragraphs = ' '.join(response.xpath('/html/body/main/div[5]/div/div[1]/div[1]/div[5]/div[2]/text()').getall()).strip()
-        if paragraphs is not paragraphs or not ''.join(paragraphs).strip():
-             item['content'] = ' '.join(response.xpath('/html/body/main/div[5]/div/div[1]/div/div[5]/div[2]/text()').getall()).strip()
-        else:
-            item['content'] = paragraphs
+        pattern = r'class=\"article-body\">(.*?)class=\"teads\"></div>'
+        paragraphs = response.xpath('/html/body/main/div[5]/div/div[1]').get()
+        item['content'] = re.findall(pattern, paragraphs, re.DOTALL)[0].strip() # robust
 
-        item['url'] = response.xpath('/html/head/link[3]/@href').get()
+        item['url'] = response.xpath('/html/head/link[3]/@href').get() # robust
 
         self.items.append(item)
 
